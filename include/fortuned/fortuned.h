@@ -1,27 +1,28 @@
 /**\file
  *
  * \copyright
- * This file is part of the libefgy project, which is released as open source
+ * This file is part of the fortuned project, which is released as open source
  * under the terms of an MIT/X11-style licence, described in the COPYING file.
  *
- * \see Project Documentation: https://ef.gy/documentation/libefgy
- * \see Project Source Code: https://github.com/ef-gy/libefgy
- * \see Licence Terms: https://github.com/ef-gy/libefgy/blob/master/COPYING
+ * \see Project Documentation: https://ef.gy/documentation/fortuned
+ * \see Project Source Code: https://github.com/ef-gy/fortuned
+ * \see Licence Terms: https://github.com/ef-gy/fortuned/blob/master/COPYING
  */
 
-#if !defined(EF_GY_FORTUNED_H)
-#define EF_GY_FORTUNED_H
+#if !defined(FORTUNED_FORTUNED_H)
+#define FORTUNED_FORTUNED_H
 
 #include <ef.gy/httpd.h>
-#include <ef.gy/fortune.h>
+#include <fortuned/fortune.h>
 
-namespace efgy {
 namespace fortuned {
+using namespace efgy;
+
 static const std::string regex = "/fortune(/([0-9]+))?";
 
 template <class transport>
-static bool fortune(typename net::http::server<transport>::session &session,
-                    std::smatch &) {
+static bool reply(typename net::http::server<transport>::session &session,
+                  std::smatch &) {
   const auto &c = fortune::common().get();
   std::string sc = std::string(c);
 
@@ -71,7 +72,6 @@ static cli::option print("-{0,2}print(:([0-9]+))?",
                          },
                          "Print a fortune to stdout - a numerical parameter "
                          "selects a specific cookie.");
-}
 }
 
 #endif

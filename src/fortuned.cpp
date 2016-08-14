@@ -11,29 +11,30 @@
  * while the programme is running.
  *
  * \copyright
- * This file is part of the libefgy project, which is released as open source
+ * This file is part of the fortuned project, which is released as open source
  * under the terms of an MIT/X11-style licence, described in the COPYING file.
  *
- * \see Project Documentation: https://ef.gy/documentation/libefgy
- * \see Project Source Code: https://github.com/ef-gy/libefgy
- * \see Licence Terms: https://github.com/ef-gy/libefgy/blob/master/COPYING
+ * \see Project Documentation: https://ef.gy/documentation/fortuned
+ * \see Project Source Code: https://github.com/ef-gy/fortuned
+ * \see Licence Terms: https://github.com/ef-gy/fortuned/blob/master/COPYING
  */
 
 #define ASIO_DISABLE_THREADS
-#include <ef.gy/fortuned.h>
+#include <fortuned/fortuned.h>
 
 using namespace efgy;
+using fortuned::fortune;
 
 namespace tcp {
 using asio::ip::tcp;
-static httpd::servlet<tcp> fortune(fortuned::regex, fortuned::fortune<tcp>);
+static httpd::servlet<tcp> fortune(fortuned::regex, fortuned::reply<tcp>);
 static httpd::servlet<tcp> quit("/quit", httpd::quit<tcp>);
 }
 
 namespace unix {
 using asio::local::stream_protocol;
 static httpd::servlet<stream_protocol>
-    fortune(fortuned::regex, fortuned::fortune<stream_protocol>);
+    fortune(fortuned::regex, fortuned::reply<stream_protocol>);
 static httpd::servlet<stream_protocol> quit("/quit",
                                             httpd::quit<stream_protocol>);
 }
