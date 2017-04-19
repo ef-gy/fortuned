@@ -12,10 +12,13 @@
 #if !defined(FORTUNED_FORTUNED_H)
 #define FORTUNED_FORTUNED_H
 
-#include <ef.gy/httpd.h>
+#include <cxxhttp/httpd-quit.h>
+#include <cxxhttp/httpd.h>
+
 #include <fortuned/fortune.h>
 
 namespace fortuned {
+using namespace cxxhttp;
 using namespace efgy;
 
 static const std::string regex = "/fortune(/([0-9]+))?";
@@ -45,7 +48,7 @@ static bool reply(typename net::http::server<transport>::session &session,
   sc = "<![CDATA[" + sc + "]]>";
 
   session.reply(
-      200, "Content-Type: text/xml; charset=utf-8\r\n",
+      200, {{"Content-Type", "text/xml; charset=utf-8"}},
       std::string("<?xml version='1.0' encoding='utf-8'?>"
                   "<fortune xmlns='http://ef.gy/2012/fortune' sourceFile='" +
                   c.file + "'>" + sc + "</fortune>"));
@@ -53,11 +56,14 @@ static bool reply(typename net::http::server<transport>::session &session,
   return true;
 }
 
-static cli::option count("-{0,2}count", [](std::smatch &m) -> bool {
-  std::cout << fortune::common().size() << " cookie(s) loaded\n";
+static cli::option count(
+    "-{0,2}count",
+    [](std::smatch &m) -> bool {
+      std::cout << fortune::common().size() << " cookie(s) loaded\n";
 
-  return true;
-}, "Prints the number of fortune cookies in the database.");
+      return true;
+    },
+    "Prints the number of fortune cookies in the database.");
 
 static cli::option print("-{0,2}print(:([0-9]+))?",
                          [](std::smatch &m) -> bool {

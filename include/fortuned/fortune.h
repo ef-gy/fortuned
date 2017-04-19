@@ -12,17 +12,17 @@
 #if !defined(FORTUNED_FORTUNE_H)
 #define FORTUNED_FORTUNE_H
 
-#include <ef.gy/httpd.h>
+#include <cxxhttp/httpd.h>
 
-#include <cstdlib>
 #include <dirent.h>
-#include <iostream>
+#include <cstdlib>
 #include <fstream>
+#include <iostream>
 
 namespace fortuned {
 
 class fortune {
-public:
+ public:
   fortune(void) : cookies(), data() {}
 
   static fortune &common(void) {
@@ -30,9 +30,9 @@ public:
     return f;
   }
 
-protected:
+ protected:
   class cookie {
-  public:
+   public:
     const std::string file;
 
     cookie(bool pROT13, const std::string &pData, const std::string &pFile)
@@ -46,64 +46,64 @@ protected:
           char c = r[i];
 
           switch (c) {
-          case 'a':
-          case 'b':
-          case 'c':
-          case 'd':
-          case 'e':
-          case 'f':
-          case 'g':
-          case 'h':
-          case 'i':
-          case 'j':
-          case 'k':
-          case 'l':
-          case 'm':
-          case 'A':
-          case 'B':
-          case 'C':
-          case 'D':
-          case 'E':
-          case 'F':
-          case 'G':
-          case 'H':
-          case 'I':
-          case 'J':
-          case 'K':
-          case 'L':
-          case 'M':
-            r[i] = c + 13;
-            break;
-          case 'n':
-          case 'o':
-          case 'p':
-          case 'q':
-          case 'r':
-          case 's':
-          case 't':
-          case 'u':
-          case 'v':
-          case 'w':
-          case 'x':
-          case 'y':
-          case 'z':
-          case 'N':
-          case 'O':
-          case 'P':
-          case 'Q':
-          case 'R':
-          case 'S':
-          case 'T':
-          case 'U':
-          case 'V':
-          case 'W':
-          case 'X':
-          case 'Y':
-          case 'Z':
-            r[i] = c - 13;
-            break;
-          default:
-            break;
+            case 'a':
+            case 'b':
+            case 'c':
+            case 'd':
+            case 'e':
+            case 'f':
+            case 'g':
+            case 'h':
+            case 'i':
+            case 'j':
+            case 'k':
+            case 'l':
+            case 'm':
+            case 'A':
+            case 'B':
+            case 'C':
+            case 'D':
+            case 'E':
+            case 'F':
+            case 'G':
+            case 'H':
+            case 'I':
+            case 'J':
+            case 'K':
+            case 'L':
+            case 'M':
+              r[i] = c + 13;
+              break;
+            case 'n':
+            case 'o':
+            case 'p':
+            case 'q':
+            case 'r':
+            case 's':
+            case 't':
+            case 'u':
+            case 'v':
+            case 'w':
+            case 'x':
+            case 'y':
+            case 'z':
+            case 'N':
+            case 'O':
+            case 'P':
+            case 'Q':
+            case 'R':
+            case 'S':
+            case 'T':
+            case 'U':
+            case 'V':
+            case 'W':
+            case 'X':
+            case 'Y':
+            case 'Z':
+              r[i] = c - 13;
+              break;
+            default:
+              break;
           }
         }
       }
@@ -111,7 +111,7 @@ protected:
       return r;
     }
 
-  protected:
+   protected:
     bool rot13;
     const std::string data;
   };
@@ -119,7 +119,7 @@ protected:
   std::vector<cookie> cookies;
   std::map<std::string, std::string> data;
 
-public:
+ public:
   bool prepare(const std::string &dir, const bool doROT13 = false) {
     static const std::regex dataFile(".*/[a-zA-Z-]+");
     std::smatch matches;
@@ -148,38 +148,39 @@ public:
 
         for (size_t c = 0; c < p.size(); c++) {
           switch (data[c]) {
-          case '\n':
-            switch (state) {
-            case stN:
-              state = stNL;
+            case '\n':
+              switch (state) {
+                case stN:
+                  state = stNL;
+                  break;
+                case stNLP:
+                  cookies.push_back(
+                      cookie(doROT13,
+                             std::string(p.data() + start, c - start - 1), e));
+                  start = c + 1;
+                default:
+                  state = stN;
+                  break;
+              }
               break;
-            case stNLP:
-              cookies.push_back(cookie(
-                  doROT13, std::string(p.data() + start, c - start - 1), e));
-              start = c + 1;
+
+            case '%':
+              switch (state) {
+                case stNL:
+                  state = stNLP;
+                  break;
+                default:
+                  state = stN;
+                  break;
+              }
+              break;
+
+            case '\r':
+              break;
+
             default:
               state = stN;
               break;
-            }
-            break;
-
-          case '%':
-            switch (state) {
-            case stNL:
-              state = stNLP;
-              break;
-            default:
-              state = stN;
-              break;
-            }
-            break;
-
-          case '\r':
-            break;
-
-          default:
-            state = stN;
-            break;
           }
         }
       }
