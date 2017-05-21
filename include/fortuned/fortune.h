@@ -1,12 +1,16 @@
-/**\file
+/* Fortune cookie handling.
  *
- * \copyright
+ * The code in these files allows parsing fortune cookies from the on-disk
+ * representation.
+ *
+ * See also:
+ * * Project Documentation: https://ef.gy/documentation/fortuned
+ * * Project Source Code: https://github.com/ef-gy/fortuned
+ * * Licence Terms: https://github.com/ef-gy/fortuned/blob/master/COPYING
+ *
+ * @copyright
  * This file is part of the fortuned project, which is released as open source
  * under the terms of an MIT/X11-style licence, described in the COPYING file.
- *
- * \see Project Documentation: https://ef.gy/documentation/fortuned
- * \see Project Source Code: https://github.com/ef-gy/fortuned
- * \see Licence Terms: https://github.com/ef-gy/fortuned/blob/master/COPYING
  */
 
 #if !defined(FORTUNED_FORTUNE_H)
