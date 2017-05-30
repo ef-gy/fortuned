@@ -23,9 +23,7 @@
 namespace fortuned {
 static const std::string regex = "/fortune(/([0-9]+))?";
 
-template <class transport>
-static void reply(typename cxxhttp::http::server<transport>::session &session,
-                  std::smatch &) {
+static void reply(cxxhttp::http::sessionData &session, std::smatch &) {
   const auto &c = fortune::common().get();
   std::string sc = std::string(c);
 
@@ -78,12 +76,7 @@ static efgy::cli::option print(
     "Print a fortune to stdout - a numerical parameter "
     "selects a specific cookie.");
 
-using cxxhttp::transport::tcp;
-using cxxhttp::transport::unix;
-
-static cxxhttp::httpd::servlet<tcp> TCP(fortuned::regex, fortuned::reply<tcp>);
-static cxxhttp::httpd::servlet<unix> UNIX(fortuned::regex,
-                                          fortuned::reply<unix>);
+static cxxhttp::http::servlet servlet(fortuned::regex, fortuned::reply);
 }
 
 #endif
