@@ -15,14 +15,28 @@
  */
 
 #define ASIO_DISABLE_THREADS
-#include <fortuned/fortuned.h>
+#include <cxxhttp/httpd-options.h>
+#include <cxxhttp/httpd-trace.h>
 
+#include <fortuned/cli.h>
+#include <fortuned/httpd-fortune.h>
+
+/* FaaS main function
+ * @argc Number of command line arguments.
+ * @argv The actual command line arguments passed to the programme.
+ *
+ * This function fills the cache for the fortune programme using the default
+ * locations for this on a Debian system, then starts serving fortune cookies
+ * from that.
+ *
+ * @return zero on success, nonzero otherwise.
+ */
 int main(int argc, char* argv[]) {
   auto& fortunes = efgy::global<fortuned::fortune>();
-  fortunes.prepare("/usr/share/games/fortunes/");
-  fortunes.prepare("/usr/share/games/fortunes/off/", true);
+  fortunes.load("/usr/share/games/fortunes");
+  fortunes.load("/usr/share/games/fortunes/off", true);
 
-  fortuned::cookiesTotal.set(fortunes.size());
+  fortuned::cookiesTotal.set(fortunes.cookies.size());
 
   srand(time(0));
 

@@ -20,3 +20,6 @@ dependencies.mk
 
 # targets
 fortuned
+
+# headers
+!include/fortuned

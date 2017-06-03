@@ -13,25 +13,46 @@
  * under the terms of an MIT/X11-style licence, described in the COPYING file.
  */
 
-#if !defined(FORTUNED_FORTUNED_H)
-#define FORTUNED_FORTUNED_H
+#if !defined(FORTUNED_HTTPD_FORTUNE_H)
+#define FORTUNED_HTTPD_FORTUNE_H
 
+#include <ef.gy/global.h>
 #include <ef.gy/json.h>
-
-#include <cxxhttp/httpd.h>
 
 #include <prometheus/httpd-metrics.h>
 
 #include <fortuned/fortune.h>
 
 namespace fortuned {
-prometheus::metric::counter cookiesServed(
+/* fortuned_cookies_served_total Prometheus metric.
+ *
+ * This metric counts the number of times a cookie was served through the HTTP
+ * API. Each (valid) access below /fortune is increasing this counter.
+ */
+static prometheus::metric::counter cookiesServed(
     "fortuned_cookies_served_total",
     "How many fortune cookies have been sent back to clients.");
-prometheus::metric::gauge cookiesTotal(
+
+/* fortuned_cookies_total Prometheus metric.
+ *
+ * This metric is a simple count of all the cookies that the server knows about.
+ * It must be set manually, and this is done in the `main` function.
+ */
+static prometheus::metric::gauge cookiesTotal(
     "fortuned_cookies_total",
     "How many unique fortune cookies we have loaded.");
 
+/* `fortune` API entry point.
+ * @session The HTTP session to reply on.
+ * @matches Resource path regex matches. Used to extract the cookie ID, if set.
+ *
+ * This replies by either selecting a random cookie, or selecting the one with
+ * the given ID and sending it back to the client that requested it.
+ *
+ * Supported output modes are plain text, XML and JSON. Selecting between these
+ * modes is done through the `Accept:` header, see the servlet definition below
+ * for the details.
+ */
 static void reply(cxxhttp::http::sessionData &session, std::smatch &matches) {
   using efgy::json::json;
   using efgy::json::to_string;
@@ -40,19 +61,19 @@ static void reply(cxxhttp::http::sessionData &session, std::smatch &matches) {
   auto &fortunes = efgy::global<fortuned::fortune>();
   std::string sid = matches[2];
 
-  if (fortunes.size() == 0) {
+  if (fortunes.cookies.size() == 0) {
     error(session).reply(503);
     return;
   }
 
   std::size_t id = sid.empty() ? fortunes.random() : std::stoll(sid);
-  if (id > fortunes.size()) {
+  if (id >= fortunes.cookies.size()) {
     error(session).reply(404);
     return;
   }
 
-  const auto &c = fortunes.get(id);
-  const std::string &source = c;
+  const auto &c = fortunes.cookies[id];
+  const std::string &source = c.data;
   std::string sc;
 
   for (const auto &c : source) {
@@ -71,11 +92,11 @@ static void reply(cxxhttp::http::sessionData &session, std::smatch &matches) {
   if (type == "text/xml" || type == "application/xml") {
     sc = "<![CDATA[" + sc + "]]>";
 
-    session.reply(
-        200,
-        std::string("<?xml version='1.0' encoding='utf-8'?>"
-                    "<fortune xmlns='http://ef.gy/2012/fortune' sourceFile='" +
-                    c.file + "'>" + sc + "</fortune>"));
+    session.reply(200,
+                  "<?xml version='1.0' encoding='utf-8'?>"
+                  "<fortune xmlns='http://ef.gy/2012/fortune' sourceFile='" +
+                      c.file + "' fileID='" + std::to_string(c.id) + "' id='" +
+                      std::to_string(id) + "'>" + sc + "</fortune>");
   } else if (type == "text/json") {
     json r;
     r.toObject();
@@ -91,30 +112,11 @@ static void reply(cxxhttp::http::sessionData &session, std::smatch &matches) {
   }
 }
 
-static efgy::cli::option count(
-    "-{0,2}count",
-    [](std::smatch &m) -> bool {
-      auto &fortunes = efgy::global<fortuned::fortune>();
-      std::cout << fortunes.size() << " cookie(s) loaded\n";
-
-      return true;
-    },
-    "Prints the number of fortune cookies in the database.");
-
-static efgy::cli::option print(
-    "-{0,2}print(:([0-9]+))?",
-    [](std::smatch &m) -> bool {
-      auto &fortunes = efgy::global<fortuned::fortune>();
-      std::string sid = m[2];
-      std::size_t id = sid.empty() ? fortunes.random() : std::stoll(sid);
-      const auto &c = fortunes.get(id);
-      std::cout << std::string(c);
-
-      return true;
-    },
-    "Print a fortune to stdout - a numerical parameter "
-    "selects a specific cookie.");
-
+/* `fortune` API servlet definition.
+ *
+ * Note the accepted MIME types, and see the <reply> function's documentation
+ * for more details.
+ */
 static cxxhttp::http::servlet servlet(
     "/fortune(/([0-9]+))?", fortuned::reply, "GET",
     {{"Accept",
