@@ -17,11 +17,12 @@
 #define ASIO_DISABLE_THREADS
 #include <fortuned/fortuned.h>
 
-using fortuned::fortune;
+int main(int argc, char* argv[]) {
+  auto& fortunes = efgy::global<fortuned::fortune>();
+  fortunes.prepare("/usr/share/games/fortunes/");
+  fortunes.prepare("/usr/share/games/fortunes/off/", true);
 
-int main(int argc, char *argv[]) {
-  fortune::common().prepare("/usr/share/games/fortunes/");
-  fortune::common().prepare("/usr/share/games/fortunes/off/", true);
+  fortuned::cookiesTotal.set(fortunes.size());
 
   srand(time(0));
 

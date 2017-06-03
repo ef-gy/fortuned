@@ -2,3 +2,5 @@
 
 NAME:=fortuned
 VERSION:=1
+
+CXXFLAGS+=-pedantic -Wall
