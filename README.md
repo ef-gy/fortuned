@@ -11,15 +11,6 @@ disruptive yadda yadda revenue yadda killer app yadda convergence yadda robust
 metrics yadda yadda game-changing. This paragraph was placed here in case you
 need to win a round of buzzword bingo.
 
-## Compiling
-
-You can compile and run `fortuned` yourself, all you need is a C++14-compatible
-compiler and libc on a UNIX-like OS. The instructions at for CXXHTTP should
-get you started with any dependencies you need: https://github.com/ef-gy/cxxhttp
-
-In addition to those listed there, you'll also need some fortune cookie files.
-Installing fortune-mod and a few of the fortune packs should take care of that.
-
 ## The API
 
 A hosted version of this API is available at https://api.ef.gy/fortune, and the
@@ -209,4 +200,13 @@ of the XML output, which you would retrieve like this:
     ]]></fortune>
 
 It's fairly readable XML, but it's still XML.
+
+## Compiling and installing locally
+
+You can compile and run `fortuned` yourself, all you need is a C++14-compatible
+compiler and libc on a UNIX-like OS. The instructions for CXXHTTP should get you
+started with any dependencies you need: https://github.com/ef-gy/cxxhttp
+
+In addition to those listed there, you'll also need some fortune cookie files.
+Installing fortune-mod and a few of the fortune packs should take care of that.
 
