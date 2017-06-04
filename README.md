@@ -16,6 +16,11 @@ need to win a round of buzzword bingo.
 A hosted version of this API is available at https://api.ef.gy/fortune, and the
 examples here will refer to that base URL.
 
+The API server is also available through a Tor Hidden Service at
+http://664ov6iyvgpe63xn.onion/fortune - if you wish to use this service instead
+of the regular one, just change the URLs below accordingly. This means your
+`curl` programme needs to be set up for Tor access, of course.
+
 ### GET /fortune
 
 The `/fortune` endpoint looks up a random fortune cookie and returns it as the
