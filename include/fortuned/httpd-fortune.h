@@ -72,6 +72,14 @@ static void reply(cxxhttp::http::sessionData &session, std::smatch &matches) {
     return;
   }
 
+  std::string sidr = std::to_string(id);
+  unsigned status = 200;
+  cxxhttp::http::headers header{};
+  if (sid != sidr) {
+    status = 307;
+    header["Location"] = "/fortune/" + sidr;
+  }
+
   const auto &c = fortunes.cookies[id];
   const std::string &source = c.data;
   std::string sc;
@@ -92,11 +100,12 @@ static void reply(cxxhttp::http::sessionData &session, std::smatch &matches) {
   if (type == "text/xml" || type == "application/xml") {
     sc = "<![CDATA[" + sc + "]]>";
 
-    session.reply(200,
+    session.reply(status,
                   "<?xml version='1.0' encoding='utf-8'?>"
                   "<fortune xmlns='http://ef.gy/2012/fortune' sourceFile='" +
                       c.file + "' fileID='" + std::to_string(c.id) + "' id='" +
-                      std::to_string(id) + "'>" + sc + "</fortune>");
+                      std::to_string(id) + "'>" + sc + "</fortune>",
+                  header);
   } else if (type == "text/json") {
     json r;
     r.toObject();
@@ -106,9 +115,9 @@ static void reply(cxxhttp::http::sessionData &session, std::smatch &matches) {
     r("file") = c.file;
     r("cookie") = sc;
 
-    session.reply(200, to_string(r));
+    session.reply(status, to_string(r), header);
   } else if (type == "text/plain") {
-    session.reply(200, sc);
+    session.reply(status, sc, header);
   }
 }
 
