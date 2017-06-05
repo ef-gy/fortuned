@@ -22,8 +22,7 @@ of the regular one, just change the URLs below accordingly. This means your
 `curl` programme needs to be set up for Tor access, of course.
 
 Otherwise, you can play along at home with this JSFiddle:
-
-<script async src="//jsfiddle.net/jyujin/t87whwjr/62/embed/js,html,css,result/dark/"></script>
+https://jsfiddle.net/jyujin/t87whwjr/62/embed/js,html,css,result/dark/
 
 ### GET /fortune
 
