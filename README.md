@@ -154,18 +154,16 @@ This produces a result much like this one:
 
     HTTP/1.1 307 Temporary Redirect
     Server: nginx/1.6.2
-    Date: Sun, 04 Jun 2017 16:26:26 GMT
+    Date: Mon, 05 Jun 2017 11:31:36 GMT
     Content-Type: text/json
-    Content-Length: 251
+    Content-Length: 153
     Connection: keep-alive
-    Location: /fortune/19873
+    Location: /fortune/11833
     Vary: Accept
     Strict-Transport-Security: max-age=10886400; includeSubDomains; preload
+    Access-Control-Allow-Origin: *
 
-    {"cookie":"\"Most of us spend the first 6 days of each week sowing wild oats,
-     then we go to church on Sunday and pray for a crop failure.\"
-                           [Fred Allen]
-    ","file":"/usr/share/games/fortunes/off/atheism","file-id":210,"id":19873}
+    {"cookie":"I'm a Hollywood writer; so I put on a sports jacket and take off my brain.\n","file":"/usr/share/games/fortunes/art","file-id":155,"id":11833}
 
 As mentioned before, this also works when given an ID:
 
@@ -175,17 +173,15 @@ Which results in...
 
     HTTP/1.1 200 OK
     Server: nginx/1.6.2
-    Date: Sun, 04 Jun 2017 16:27:56 GMT
+    Date: Mon, 05 Jun 2017 11:30:45 GMT
     Content-Type: text/json
-    Content-Length: 268
+    Content-Length: 271
     Connection: keep-alive
     Vary: Accept
     Strict-Transport-Security: max-age=10886400; includeSubDomains; preload
+    Access-Control-Allow-Origin: *
 
-    {"cookie":"<NeonKttn> I had a friend stick me in her closet during highschool beacuse I
-               wouldn't believe that her boyfriend knew about foreplay...
-    <NeonKttn> I shoulda brought popcorn. :)
-    ","file":"/usr/share/games/fortunes/knghtbrd","file-id":167,"id":666}
+    {"cookie":"<NeonKttn> I had a friend stick me in her closet during highschool beacuse I\n           wouldn't believe that her boyfriend knew about foreplay...\n<NeonKttn> I shoulda brought popcorn. :)\n","file":"/usr/share/games/fortunes/knghtbrd","file-id":167,"id":666}
 
 If you're feeling particularly much like punishing yourself, here's an example
 of the XML output, which you would retrieve like this:
